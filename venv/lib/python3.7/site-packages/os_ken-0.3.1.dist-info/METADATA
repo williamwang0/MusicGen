@@ -1,0 +1,46 @@
+Metadata-Version: 2.1
+Name: os-ken
+Version: 0.3.1
+Summary: A component-based software defined networking framework for OpenStack.
+Home-page: http://www.openstack.org/
+Author: OpenStack
+Author-email: openstack-dev@lists.openstack.org
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Environment :: OpenStack
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Requires-Dist: pbr (>=2.0)
+Requires-Dist: eventlet (!=0.18.3,!=0.20.1,!=0.21.0,!=0.23.0,>=0.18.2)
+Requires-Dist: msgpack (>=0.3.0)
+Requires-Dist: netaddr (>=0.7.18)
+Requires-Dist: oslo.config (>=2.5.0)
+Requires-Dist: ovs (>=2.6.0)
+Requires-Dist: Routes (>=2.3.1)
+Requires-Dist: six (>=1.4.0)
+Requires-Dist: tinyrpc (>=0.6)
+Requires-Dist: webob (>=1.2)
+
+======
+os-ken
+======
+
+A component-based software defined networking framework in OpenStack.
+
+This is a fork of the Ryu library tailored for OpenStack Neutron.
+
+* License: Apache License, Version 2.0
+* Documentation: https://docs.openstack.org/os-ken/latest/
+* Source: https://git.openstack.org/cgit/openstack/os-ken
+* Bugs: https://bugs.launchpad.net/os-ken
+* Release Notes: https://docs.openstack.org/releasenotes/os-ken
+
+
+

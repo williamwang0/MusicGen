@@ -1,0 +1,6 @@
+[oslo.policy.enforcer]
+neutron_lib = neutron_lib._policy:get_enforcer
+
+[oslo.policy.policies]
+neutron_lib = neutron_lib._policy:list_rules
+

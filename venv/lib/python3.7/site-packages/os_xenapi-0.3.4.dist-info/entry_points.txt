@@ -1,0 +1,3 @@
+[console_scripts]
+xenapi_bootstrap = os_xenapi.cmd.bootstrap:main
+

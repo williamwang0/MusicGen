@@ -1,0 +1,4 @@
+[console_scripts]
+osken = os_ken.cmd.osken_base:main
+osken-manager = os_ken.cmd.manager:main
+

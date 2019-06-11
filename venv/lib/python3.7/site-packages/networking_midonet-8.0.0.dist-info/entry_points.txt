@@ -1,0 +1,32 @@
+[console_scripts]
+midonet-db-manage = midonet.neutron.db.migration.cli:main
+
+[flake8_import_order.styles]
+openstack = midonet.flake8_import_order.styles:OpenStack
+
+[neutron.db.alembic_migrations]
+networking-midonet = midonet.neutron.db.migration:alembic_migration
+
+[neutron.interface_drivers]
+midonet = midonet.neutron.agent.interface:MidonetInterfaceDriver
+
+[neutron.ml2.mechanism_drivers]
+midonet = midonet.neutron.ml2.mech_driver:MidonetMechanismDriver
+
+[neutron.ml2.type_drivers]
+midonet = midonet.neutron.ml2.type_midonet:MidonetTypeDriver
+uplink = midonet.neutron.ml2.type_uplink:UplinkTypeDriver
+
+[neutron.service_plugins]
+midonet_bgp = midonet.neutron.services.bgp.plugin:MidonetBgpPlugin
+midonet_gwdevice = midonet.neutron.services.gw_device.plugin:MidonetGwDeviceServicePlugin
+midonet_l2gw = midonet.neutron.services.l2gateway.plugin:MidonetL2GatewayPlugin
+midonet_l3 = midonet.neutron.services.l3.l3_midonet:MidonetL3ServicePlugin
+
+[neutronclient.extension]
+gateway_device = midonet.neutronclient.gateway_device_extension._gateway_device
+remote_mac_entry = midonet.neutronclient.gateway_device_extension._remote_mac_entry
+
+[oslo.config.opts]
+midonet_v2 = midonet.neutron.common.config:list_opts
+

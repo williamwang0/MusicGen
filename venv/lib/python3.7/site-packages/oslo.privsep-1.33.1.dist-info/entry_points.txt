@@ -1,0 +1,6 @@
+[console_scripts]
+privsep-helper = oslo_privsep.daemon:helper_main
+
+[oslo.config.opts]
+oslo.privsep = oslo_privsep.priv_context:_list_opts
+

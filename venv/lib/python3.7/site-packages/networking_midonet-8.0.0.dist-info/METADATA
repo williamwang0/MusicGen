@@ -1,0 +1,47 @@
+Metadata-Version: 2.1
+Name: networking-midonet
+Version: 8.0.0
+Summary: OpenStack MidoNet Neutron Plugin
+Home-page: https://docs.openstack.org/networking-midonet/latest/
+Author: OpenStack
+Author-email: openstack-discuss@lists.openstack.org
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Environment :: OpenStack
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Requires-Dist: pbr (!=2.1.0,>=2.0.0)
+Requires-Dist: Babel (!=2.4.0,>=2.3.4)
+Requires-Dist: neutron-lib (>=1.18.0)
+Requires-Dist: python-neutronclient (>=6.8.0)
+Requires-Dist: neutron (>=13.0.0.0b1)
+
+========================
+Team and repository tags
+========================
+
+.. image:: https://governance.openstack.org/tc/badges/networking-midonet.svg
+    :target: https://governance.openstack.org/tc/reference/tags/index.html
+
+.. Change things from this point on
+
+==================
+networking-midonet
+==================
+
+This is the official Midonet Neutron plugin.
+
+Documentation:
+
+- https://docs.openstack.org/networking-midonet/latest/
+- https://docs.midonet.org/
+
+
+

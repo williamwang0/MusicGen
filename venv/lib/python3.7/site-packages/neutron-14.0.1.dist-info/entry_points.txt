@@ -1,0 +1,240 @@
+[console_scripts]
+neutron-db-manage = neutron.db.migration.cli:main
+neutron-debug = neutron.debug.shell:main
+neutron-dhcp-agent = neutron.cmd.eventlet.agents.dhcp:main
+neutron-ipset-cleanup = neutron.cmd.ipset_cleanup:main
+neutron-keepalived-state-change = neutron.cmd.keepalived_state_change:main
+neutron-l3-agent = neutron.cmd.eventlet.agents.l3:main
+neutron-linuxbridge-agent = neutron.cmd.eventlet.plugins.linuxbridge_neutron_agent:main
+neutron-linuxbridge-cleanup = neutron.cmd.linuxbridge_cleanup:main
+neutron-macvtap-agent = neutron.cmd.eventlet.plugins.macvtap_neutron_agent:main
+neutron-metadata-agent = neutron.cmd.eventlet.agents.metadata:main
+neutron-metering-agent = neutron.cmd.eventlet.services.metering_agent:main
+neutron-netns-cleanup = neutron.cmd.netns_cleanup:main
+neutron-openvswitch-agent = neutron.cmd.eventlet.plugins.ovs_neutron_agent:main
+neutron-ovs-cleanup = neutron.cmd.ovs_cleanup:main
+neutron-pd-notify = neutron.cmd.pd_notify:main
+neutron-rootwrap = oslo_rootwrap.cmd:main
+neutron-rootwrap-daemon = oslo_rootwrap.cmd:daemon
+neutron-rpc-server = neutron.cmd.eventlet.server:main_rpc_eventlet
+neutron-sanity-check = neutron.cmd.sanity_check:main
+neutron-server = neutron.cmd.eventlet.server:main
+neutron-sriov-nic-agent = neutron.cmd.eventlet.plugins.sriov_nic_neutron_agent:main
+neutron-status = neutron.cmd.status:main
+neutron-usage-audit = neutron.cmd.eventlet.usage_audit:main
+
+[neutron.agent.firewall_drivers]
+iptables = neutron.agent.linux.iptables_firewall:IptablesFirewallDriver
+iptables_hybrid = neutron.agent.linux.iptables_firewall:OVSHybridIptablesFirewallDriver
+noop = neutron.agent.firewall:NoopFirewallDriver
+openvswitch = neutron.agent.linux.openvswitch_firewall:OVSFirewallDriver
+
+[neutron.agent.l2.extensions]
+fdb = neutron.agent.l2.extensions.fdb_population:FdbPopulationAgentExtension
+log = neutron.services.logapi.agent.log_extension:LoggingExtension
+qos = neutron.agent.l2.extensions.qos:QosAgentExtension
+
+[neutron.agent.l3.extensions]
+fip_qos = neutron.agent.l3.extensions.qos.fip:FipQosAgentExtension
+gateway_ip_qos = neutron.agent.l3.extensions.qos.gateway_ip:RouterGatewayIPQosAgentExtension
+port_forwarding = neutron.agent.l3.extensions.port_forwarding:PortForwardingAgentExtension
+snat_log = neutron.agent.l3.extensions.snat_log:SNATLoggingExtension
+
+[neutron.agent.linux.pd_drivers]
+dibbler = neutron.agent.linux.dibbler:PDDibbler
+
+[neutron.core_plugins]
+ml2 = neutron.plugins.ml2.plugin:Ml2Plugin
+
+[neutron.db.alembic_migrations]
+neutron = neutron.db.migration:alembic_migrations
+
+[neutron.interface_drivers]
+linuxbridge = neutron.agent.linux.interface:BridgeInterfaceDriver
+null = neutron.agent.linux.interface:NullDriver
+openvswitch = neutron.agent.linux.interface:OVSInterfaceDriver
+
+[neutron.ipam_drivers]
+fake = neutron.tests.unit.ipam.fake_driver:FakeDriver
+internal = neutron.ipam.drivers.neutrondb_ipam.driver:NeutronDbPool
+
+[neutron.ml2.extension_drivers]
+data_plane_status = neutron.plugins.ml2.extensions.data_plane_status:DataPlaneStatusExtensionDriver
+dns = neutron.plugins.ml2.extensions.dns_integration:DNSExtensionDriverML2
+dns_domain_ports = neutron.plugins.ml2.extensions.dns_integration:DNSDomainPortsExtensionDriver
+port_security = neutron.plugins.ml2.extensions.port_security:PortSecurityExtensionDriver
+qos = neutron.plugins.ml2.extensions.qos:QosExtensionDriver
+test = neutron.tests.unit.plugins.ml2.drivers.ext_test:TestExtensionDriver
+testdb = neutron.tests.unit.plugins.ml2.drivers.ext_test:TestDBExtensionDriver
+uplink_status_propagation = neutron.plugins.ml2.extensions.uplink_status_propagation:UplinkStatusPropagationExtensionDriver
+
+[neutron.ml2.mechanism_drivers]
+another_fake_agent = neutron.tests.unit.plugins.ml2.drivers.mech_fake_agent:AnotherFakeAgentMechanismDriver
+fake_agent = neutron.tests.unit.plugins.ml2.drivers.mech_fake_agent:FakeAgentMechanismDriver
+faulty_agent = neutron.tests.unit.plugins.ml2.drivers.mech_faulty_agent:FaultyAgentMechanismDriver
+l2population = neutron.plugins.ml2.drivers.l2pop.mech_driver:L2populationMechanismDriver
+linuxbridge = neutron.plugins.ml2.drivers.linuxbridge.mech_driver.mech_linuxbridge:LinuxbridgeMechanismDriver
+logger = neutron.tests.unit.plugins.ml2.drivers.mechanism_logger:LoggerMechanismDriver
+macvtap = neutron.plugins.ml2.drivers.macvtap.mech_driver.mech_macvtap:MacvtapMechanismDriver
+openvswitch = neutron.plugins.ml2.drivers.openvswitch.mech_driver.mech_openvswitch:OpenvswitchMechanismDriver
+sriovnicswitch = neutron.plugins.ml2.drivers.mech_sriov.mech_driver.mech_driver:SriovNicSwitchMechanismDriver
+test = neutron.tests.unit.plugins.ml2.drivers.mechanism_test:TestMechanismDriver
+
+[neutron.ml2.type_drivers]
+flat = neutron.plugins.ml2.drivers.type_flat:FlatTypeDriver
+geneve = neutron.plugins.ml2.drivers.type_geneve:GeneveTypeDriver
+gre = neutron.plugins.ml2.drivers.type_gre:GreTypeDriver
+local = neutron.plugins.ml2.drivers.type_local:LocalTypeDriver
+vlan = neutron.plugins.ml2.drivers.type_vlan:VlanTypeDriver
+vxlan = neutron.plugins.ml2.drivers.type_vxlan:VxlanTypeDriver
+
+[neutron.objects]
+AddressScope = neutron.objects.address_scope:AddressScope
+Agent = neutron.objects.agent:Agent
+AllowedAddressPair = neutron.objects.port.extensions.allowedaddresspairs:AllowedAddressPair
+AutoAllocatedTopology = neutron.objects.auto_allocate:AutoAllocatedTopology
+DNSNameServer = neutron.objects.subnet:DNSNameServer
+DVRMacAddress = neutron.objects.router:DVRMacAddress
+DefaultSecurityGroup = neutron.objects.securitygroup:DefaultSecurityGroup
+DistributedPortBinding = neutron.objects.ports:DistributedPortBinding
+ExternalNetwork = neutron.objects.network:ExternalNetwork
+ExtraDhcpOpt = neutron.objects.port.extensions.extra_dhcp_opt:ExtraDhcpOpt
+Flavor = neutron.objects.flavor:Flavor
+FlavorServiceProfileBinding = neutron.objects.flavor:FlavorServiceProfileBinding
+FloatingIP = neutron.objects.router:FloatingIP
+FloatingIPDNS = neutron.objects.floatingip:FloatingIPDNS
+IPAllocation = neutron.objects.ports:IPAllocation
+IPAllocationPool = neutron.objects.subnet:IPAllocationPool
+IpamAllocation = neutron.objects.ipam:IpamAllocation
+IpamAllocationPool = neutron.objects.ipam:IpamAllocationPool
+IpamSubnet = neutron.objects.ipam:IpamSubnet
+L3HARouterAgentPortBinding = neutron.objects.l3_hamode:L3HARouterAgentPortBinding
+L3HARouterNetwork = neutron.objects.l3_hamode:L3HARouterNetwork
+L3HARouterVRIdAllocation = neutron.objects.l3_hamode:L3HARouterVRIdAllocation
+Log = neutron.objects.logapi.logging_resource:Log
+MeteringLabel = neutron.objects.metering:MeteringLabel
+MeteringLabelRule = neutron.objects.metering:MeteringLabelRule
+Network = neutron.objects.network:Network
+NetworkDNSDomain = neutron.objects.network:NetworkDNSDomain
+NetworkDhcpAgentBinding = neutron.objects.network:NetworkDhcpAgentBinding
+NetworkPortSecurity = neutron.objects.network:NetworkPortSecurity
+NetworkRBAC = neutron.objects.network:NetworkRBAC
+NetworkSegment = neutron.objects.network:NetworkSegment
+NetworkSegmentRange = neutron.objects.network:NetworkSegmentRange
+Port = neutron.objects.ports:Port
+PortBinding = neutron.objects.ports:PortBinding
+PortBindingLevel = neutron.objects.ports:PortBindingLevel
+PortDNS = neutron.objects.ports:PortDNS
+PortDataPlaneStatus = neutron.objects.port.extensions.data_plane_status:PortDataPlaneStatus
+PortForwarding = neutron.objects.port_forwarding:PortForwarding
+PortSecurity = neutron.objects.port.extensions.port_security:PortSecurity
+ProviderResourceAssociation = neutron.objects.servicetype:ProviderResourceAssociation
+ProvisioningBlock = neutron.objects.provisioning_blocks:ProvisioningBlock
+QosBandwidthLimitRule = neutron.objects.qos.rule:QosBandwidthLimitRule
+QosDscpMarkingRule = neutron.objects.qos.rule:QosDscpMarkingRule
+QosMinimumBandwidthRule = neutron.objects.qos.rule:QosMinimumBandwidthRule
+QosPolicy = neutron.objects.qos.policy:QosPolicy
+QosPolicyDefault = neutron.objects.qos.policy:QosPolicyDefault
+QosPolicyFloatingIPBinding = neutron.objects.qos.binding:QosPolicyFloatingIPBinding
+QosPolicyNetworkBinding = neutron.objects.qos.binding:QosPolicyNetworkBinding
+QosPolicyPortBinding = neutron.objects.qos.binding:QosPolicyPortBinding
+QosPolicyRBAC = neutron.objects.qos.policy:QosPolicyRBAC
+QosPolicyRouterGatewayIPBinding = neutron.objects.qos.binding:QosPolicyRouterGatewayIPBinding
+QosRule = neutron.objects.qos.rule:QosRule
+QosRuleType = neutron.objects.qos.rule_type:QosRuleType
+QosRuleTypeDriver = neutron.objects.qos.rule_type:QosRuleTypeDriver
+Quota = neutron.objects.quota:Quota
+QuotaUsage = neutron.objects.quota:QuotaUsage
+Reservation = neutron.objects.quota:Reservation
+ResourceDelta = neutron.objects.quota:ResourceDelta
+Route = neutron.objects.subnet:Route
+Router = neutron.objects.router:Router
+RouterExtraAttributes = neutron.objects.router:RouterExtraAttributes
+RouterL3AgentBinding = neutron.objects.l3agent:RouterL3AgentBinding
+RouterPort = neutron.objects.router:RouterPort
+RouterRoute = neutron.objects.router:RouterRoute
+SecurityGroup = neutron.objects.securitygroup:SecurityGroup
+SecurityGroupPortBinding = neutron.objects.ports:SecurityGroupPortBinding
+SecurityGroupRule = neutron.objects.securitygroup:SecurityGroupRule
+SegmentHostMapping = neutron.objects.network:SegmentHostMapping
+ServiceProfile = neutron.objects.flavor:ServiceProfile
+StandardAttribute = neutron.objects.stdattrs:StandardAttribute
+SubPort = neutron.objects.trunk:SubPort
+Subnet = neutron.objects.subnet:Subnet
+SubnetPool = neutron.objects.subnetpool:SubnetPool
+SubnetPoolPrefix = neutron.objects.subnetpool:SubnetPoolPrefix
+SubnetServiceType = neutron.objects.subnet:SubnetServiceType
+Tag = neutron.objects.tag:Tag
+Trunk = neutron.objects.trunk:Trunk
+
+[neutron.policies]
+neutron = neutron.conf.policies:list_rules
+
+[neutron.qos.agent_drivers]
+linuxbridge = neutron.plugins.ml2.drivers.linuxbridge.agent.extension_drivers.qos_driver:QosLinuxbridgeAgentDriver
+ovs = neutron.plugins.ml2.drivers.openvswitch.agent.extension_drivers.qos_driver:QosOVSAgentDriver
+sriov = neutron.plugins.ml2.drivers.mech_sriov.agent.extension_drivers.qos_driver:QosSRIOVAgentDriver
+
+[neutron.service_plugins]
+auto_allocate = neutron.services.auto_allocate.plugin:Plugin
+dummy = neutron.tests.unit.dummy_plugin:DummyServicePlugin
+flavors = neutron.services.flavors.flavors_plugin:FlavorsPlugin
+log = neutron.services.logapi.logging_plugin:LoggingPlugin
+loki = neutron.services.loki.loki_plugin:LokiPlugin
+metering = neutron.services.metering.metering_plugin:MeteringPlugin
+network_ip_availability = neutron.services.network_ip_availability.plugin:NetworkIPAvailabilityPlugin
+network_segment_range = neutron.services.network_segment_range.plugin:NetworkSegmentRangePlugin
+placement = neutron.services.placement_report.plugin:PlacementReportPlugin
+port_forwarding = neutron.services.portforwarding.pf_plugin:PortForwardingPlugin
+qos = neutron.services.qos.qos_plugin:QoSPlugin
+revisions = neutron.services.revisions.revision_plugin:RevisionPlugin
+router = neutron.services.l3_router.l3_router_plugin:L3RouterPlugin
+segments = neutron.services.segments.plugin:Plugin
+tag = neutron.services.tag.tag_plugin:TagPlugin
+timestamp = neutron.services.timestamp.timestamp_plugin:TimeStampPlugin
+trunk = neutron.services.trunk.plugin:TrunkPlugin
+
+[neutron.services.external_dns_drivers]
+designate = neutron.services.externaldns.drivers.designate.driver:Designate
+
+[neutron.services.logapi.drivers]
+ovs = neutron.services.logapi.drivers.openvswitch.ovs_firewall_log:OVSFirewallLoggingDriver
+
+[neutron.services.metering_drivers]
+iptables = neutron.services.metering.drivers.iptables.iptables_driver:IptablesMeteringDriver
+noop = neutron.services.metering.drivers.noop.noop_driver:NoopMeteringDriver
+
+[neutron.status.upgrade.checks]
+neutron = neutron.cmd.upgrade_checks.checks:CoreChecks
+
+[oslo.config.opts]
+neutron = neutron.opts:list_opts
+neutron.agent = neutron.opts:list_agent_opts
+neutron.az.agent = neutron.opts:list_az_agent_opts
+neutron.base.agent = neutron.opts:list_base_agent_opts
+neutron.db = neutron.opts:list_db_opts
+neutron.dhcp.agent = neutron.opts:list_dhcp_agent_opts
+neutron.extensions = neutron.opts:list_extension_opts
+neutron.l3.agent = neutron.opts:list_l3_agent_opts
+neutron.metadata.agent = neutron.opts:list_metadata_agent_opts
+neutron.metering.agent = neutron.opts:list_metering_agent_opts
+neutron.ml2 = neutron.opts:list_ml2_conf_opts
+neutron.ml2.linuxbridge.agent = neutron.opts:list_linux_bridge_opts
+neutron.ml2.macvtap.agent = neutron.opts:list_macvtap_opts
+neutron.ml2.ovs.agent = neutron.opts:list_ovs_opts
+neutron.ml2.sriov.agent = neutron.opts:list_sriov_agent_opts
+neutron.ml2.xenapi = neutron.opts:list_xenapi_opts
+nova.auth = neutron.opts:list_auth_opts
+
+[oslo.config.opts.defaults]
+neutron = neutron.common.config:set_cors_middleware_defaults
+
+[oslo.policy.enforcer]
+neutron = neutron.policy:get_enforcer
+
+[oslo.policy.policies]
+neutron = neutron.conf.policies:list_rules
+
+[wsgi_scripts]
+neutron-api = neutron.server:get_application
+
