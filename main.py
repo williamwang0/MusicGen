@@ -1,6 +1,5 @@
 import mido
-from mido import Message
-from mido import MidiFile, MidiTrack
+from mido import MidiFile, MidiTrack, Message
 import numpy as np
 
 bach1 = MidiFile('bach_846.mid')
@@ -12,8 +11,8 @@ file = MidiFile()
 ##############################
 
 def createChain(song, channel): #Takes in both a song and a channel to base the chain off of
-    tMatrix = np.zeros((100,100))
-    normalizationVec = np.zeros(100)
+    tMatrix = np.zeros((127,127))
+    normalizationVec = np.zeros(127)
 
 
     prev = 0
@@ -28,7 +27,7 @@ def createChain(song, channel): #Takes in both a song and a channel to base the 
                 prev = curr
 
 
-    for index in range(100):
+    for index in range(127):
         if normalizationVec[index] != 0:
             tMatrix[index] = tMatrix[index] / normalizationVec[index]
 
