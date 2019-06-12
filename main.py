@@ -29,7 +29,8 @@ def createChain(song, channel): #Takes in both a song and a channel to base the 
 
 
     for index in range(100):
-        tMatrix[index] = tMatrix[index] / normalizationVec[i]
+        if normalizationVec[index] != 0:
+            tMatrix[index] = tMatrix[index] / normalizationVec[i]
 
     return tMatrix
 
