@@ -17,7 +17,7 @@ def createChain(song, channel): #Takes in both a song and a channel to base the 
 
 
     prev = 0
-    for i, track in enumerate(bach1.tracks):
+    for i, track in enumerate(song.tracks):
         for msg in track:
             if msg.type == 'note_on' and msg.channel == channel:
 
