@@ -28,9 +28,7 @@ def createChain(song, channel):  # Takes in both a song and a channel to base th
                     tMatrix[prev - 1][curr - 1] = tMatrix[prev - 1][curr - 1] + 1
                 prev = curr
 
-    for index in range(127):
-        if normalizationVec[index] != 0:
-            tMatrix[index] = tMatrix[index] / normalizationVec[index]
+    matNorm(tMatrix)
 
     return tMatrix
 
@@ -69,6 +67,11 @@ def genSeq(chain, length):
             seq.append(note)
     return seq
 
+
+def matNorm(matrix): #Mutates Matrix by Normalizing it
+    for index in range(matrix.shape[0] - 1):
+        if sum(matrix[index]) != 0:
+            matrix[index] = matrix[index] / sum(matrix[index])
 
 
 ##############################
