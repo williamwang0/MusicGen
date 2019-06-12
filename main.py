@@ -14,23 +14,44 @@ file = MidiFile()
 ##############################
 
 def createChain(song, channel):  # Takes in both a song and a channel to base the chain off of
-    tMatrix = np.zeros((127, 127))
-    normalizationVec = np.zeros(127)
-    timeDict = {}
+    times = []
+    notes = []
 
-    prev = 0
+    # Creates a list of all possible notes and times found in song
     for i, track in enumerate(song.tracks):
         for msg in track:
-            if msg.time not in timeDict.keys():
-                timeDict[msg.time] = np.zeros((127, 127))
-            else:
-                if msg.type == 'note_on' and msg.channel == channel:
+            if msg.time not in times and msg.time > 1:
+                times.append(msg.time)
+            if msg.note not in notes:
+                notes.append(msg.note)
+    times = times.sort()
+    notes = notes.sort()
 
-                    curr = msg.note
-                    if prev != 0:
-                        normalizationVec[prev - 1] = normalizationVec[prev - 1] + 1
-                        tMatrix[prev - 1][curr - 1] = tMatrix[prev - 1][curr - 1] + 1
-                    prev = curr
+    size = len(times) * len(notes)
+    tMatrix = np.zeros((size, size))
+
+    for i, track in enumerate(song.tracks):
+        for msg in track:
+            if msg.type == 'note_on' and msg.channel == channel:
+                curr = msg.note
+                time = msg.time
+
+
+    # timeDict = {}
+    #
+    # prev = 0
+    # for i, track in enumerate(song.tracks):
+    #     for msg in track:
+    #         if msg.time not in timeDict.keys():
+    #             timeDict[msg.time] = np.zeros((127, 127))
+    #         else:
+    #             if msg.type == 'note_on' and msg.channel == channel:
+    #
+    #                 curr = msg.note
+    #                 if prev != 0:
+    #                     normalizationVec[prev - 1] = normalizationVec[prev - 1] + 1
+    #                     tMatrix[prev - 1][curr - 1] = tMatrix[prev - 1][curr - 1] + 1
+    #                 prev = curr
 
 
 
