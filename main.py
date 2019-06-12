@@ -16,6 +16,23 @@ file = MidiFile()
 def createChain(song, channel):  # Takes in both a song and a channel to base the chain off of
     tMatrix = np.zeros((127, 127))
     normalizationVec = np.zeros(127)
+    timeDict = {}
+
+    prev = 0
+    for i, track in enumerate(song.tracks):
+        for msg in track:
+            if msg.time not in timeDict.keys():
+                timeDict[msg.time] = np.zeros((127, 127))
+            else:
+                if msg.type == 'note_on' and msg.channel == channel:
+
+                    curr = msg.note
+                    if prev != 0:
+                        normalizationVec[prev - 1] = normalizationVec[prev - 1] + 1
+                        tMatrix[prev - 1][curr - 1] = tMatrix[prev - 1][curr - 1] + 1
+                    prev = curr
+
+
 
     prev = 0
     for i, track in enumerate(song.tracks):
@@ -78,10 +95,16 @@ def matNorm(matrix): #Mutates Matrix by Normalizing it
 #          Running           #
 ##############################
 
+for i, track in enumerate(bach1.tracks):
+    min = 10000
+    for msg in track:
+        if msg.time < min and msg.time > 0:
+            min = msg.time
+    print(min)
 
-chain = createChain(bach1, 2)
-for i in chain:
-    print(i)
+# chain = createChain(bach1, 2)
+# for i in chain:
+#     print(i)
 
 
 # for i in range(len(chain)):
@@ -91,8 +114,8 @@ for i in chain:
 #             flag = False
 #             print(i)
 
-seq = genSeq(chain, 200)
-saveMidi(seq, 64, 100, "TrialOne.mid")
-
-
-file.save("Testing.mid")
+# seq = genSeq(chain, 200)
+# saveMidi(seq, 64, 100, "TrialOne.mid")
+#
+#
+# file.save("Testing.mid")
