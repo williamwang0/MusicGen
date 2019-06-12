@@ -4,7 +4,7 @@ import numpy as np
 from random import randint
 from random import uniform
 
-bach1 = MidiFile('bach_846.mid')
+bach1 = MidiFile('training-songs/bach_846.mid')
 
 file = MidiFile()
 
