@@ -20,12 +20,13 @@ def createChain(song, channel):  # Takes in both a song and a channel to base th
     # Creates a list of all possible notes and times found in song
     for i, track in enumerate(song.tracks):
         for msg in track:
-            if msg.time not in times and msg.time > 1:
-                times.append(msg.time)
-            if msg.note not in notes:
-                notes.append(msg.note)
-    times = times.sort()
-    notes = notes.sort()
+            if msg.type == 'note_on' and msg.channel == channel:
+                if msg.time not in times and msg.time > 1:
+                    times.append(msg.time)
+                if msg.note not in notes:
+                    notes.append(msg.note)
+    times.sort()
+    notes.sort()
 
     size = len(times) * len(notes)
     tMatrix = np.zeros((size, size))
@@ -35,13 +36,24 @@ def createChain(song, channel):  # Takes in both a song and a channel to base th
         for msg in track:
             if msg.type == 'note_on' and msg.channel == channel:
                 curr = msg.note
-                if prev !=0:
+                if prev !=0 and msg.time > 1:
                     noteIndex = notes.index(msg.note)
                     timeIndex = times.index(msg.time)
-                    tMatrix[(noteIndex * len(times)) + timeIndex] = tMatrix[(noteIndex * len(times)) + timeIndex] + 1
+                    tMatrix[prev][(noteIndex * len(times)) + timeIndex] = tMatrix[prev][(noteIndex * len(times)) + timeIndex] + 1
                 prev = curr
 
-    matNorm(tMatrix)
+    # prev = 0
+    # for i, track in enumerate(song.tracks):
+    #     for msg in track:
+    #         if msg.type == 'note_on' and msg.channel == channel:
+    #
+    #             curr = msg.note
+    #             if prev != 0:
+    #                 normalizationVec[prev - 1] = normalizationVec[prev - 1] + 1
+    #                 tMatrix[prev - 1][curr - 1] = tMatrix[prev - 1][curr - 1] + 1
+    #             prev = curr
+
+    # matNorm(tMatrix)
 
     return tMatrix
 
@@ -91,16 +103,16 @@ def matNorm(matrix): #Mutates Matrix by Normalizing it
 #          Running           #
 ##############################
 
-for i, track in enumerate(bach1.tracks):
-    min = 10000
-    for msg in track:
-        if msg.time < min and msg.time > 0:
-            min = msg.time
-    print(min)
+# for i, track in enumerate(bach1.tracks):
+#     min = 10000
+#     for msg in track:
+#         if msg.time < min and msg.time > 0:
+#             min = msg.time
+#     print(min)
 
-# chain = createChain(bach1, 2)
-# for i in chain:
-#     print(i)
+chain = createChain(bach1, 2)
+for i in chain:
+    print(i)
 
 
 # for i in range(len(chain)):
