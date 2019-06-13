@@ -30,40 +30,15 @@ def createChain(song, channel):  # Takes in both a song and a channel to base th
     size = len(times) * len(notes)
     tMatrix = np.zeros((size, size))
 
-    for i, track in enumerate(song.tracks):
-        for msg in track:
-            if msg.type == 'note_on' and msg.channel == channel:
-                curr = msg.note
-                time = msg.time
-
-
-    # timeDict = {}
-    #
-    # prev = 0
-    # for i, track in enumerate(song.tracks):
-    #     for msg in track:
-    #         if msg.time not in timeDict.keys():
-    #             timeDict[msg.time] = np.zeros((127, 127))
-    #         else:
-    #             if msg.type == 'note_on' and msg.channel == channel:
-    #
-    #                 curr = msg.note
-    #                 if prev != 0:
-    #                     normalizationVec[prev - 1] = normalizationVec[prev - 1] + 1
-    #                     tMatrix[prev - 1][curr - 1] = tMatrix[prev - 1][curr - 1] + 1
-    #                 prev = curr
-
-
-
     prev = 0
     for i, track in enumerate(song.tracks):
         for msg in track:
             if msg.type == 'note_on' and msg.channel == channel:
-
                 curr = msg.note
-                if prev != 0:
-                    normalizationVec[prev - 1] = normalizationVec[prev - 1] + 1
-                    tMatrix[prev - 1][curr - 1] = tMatrix[prev - 1][curr - 1] + 1
+                if prev !=0:
+                    noteIndex = notes.index(msg.note)
+                    timeIndex = times.index(msg.time)
+                    tMatrix[(noteIndex * len(times)) + timeIndex] = tMatrix[(noteIndex * len(times)) + timeIndex] + 1
                 prev = curr
 
     matNorm(tMatrix)
