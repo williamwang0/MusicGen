@@ -3,6 +3,7 @@ from mido import MidiFile, MidiTrack, Message
 import numpy as np
 from random import randint
 from random import uniform
+import random
 
 bach1 = MidiFile('training-songs/bach_846.mid')
 
@@ -14,32 +15,20 @@ file = MidiFile()
 ##############################
 
 def createChain(song, channel):  # Takes in both a song and a channel to base the chain off of
-    times = []
-    notes = []
+    NoteTimeList = makeNoteTimeList(song, channel)
 
-    # Creates a list of all possible notes and times found in song
-    for i, track in enumerate(song.tracks):
-        for msg in track:
-            if msg.type == 'note_on' and msg.channel == channel:
-                if msg.time not in times and msg.time > 1:
-                    times.append(msg.time)
-                if msg.note not in notes:
-                    notes.append(msg.note)
-    times.sort()
-    notes.sort()
-
-    size = len(times) * len(notes)
+    print(NoteTimeList)
+    size = len(NoteTimeList)
     tMatrix = np.zeros((size, size))
 
     prev = 0
     for i, track in enumerate(song.tracks):
         for msg in track:
-            if msg.type == 'note_on' and msg.channel == channel:
-                curr = msg.note
-                if prev !=0 and msg.time > 1:
-                    noteIndex = notes.index(msg.note)
-                    timeIndex = times.index(msg.time)
-                    tMatrix[prev][(noteIndex * len(times)) + timeIndex] = tMatrix[prev][(noteIndex * len(times)) + timeIndex] + 1
+            if msg.type == 'note_on' and msg.channel == channel and msg.time > 1:
+                pair = (msg.note, msg.time)
+                curr = NoteTimeList.index(pair)
+                if prev != 0:
+                    tMatrix[prev][curr] += 1
                 prev = curr
 
     # prev = 0
@@ -53,7 +42,7 @@ def createChain(song, channel):  # Takes in both a song and a channel to base th
     #                 tMatrix[prev - 1][curr - 1] = tMatrix[prev - 1][curr - 1] + 1
     #             prev = curr
 
-    # matNorm(tMatrix)
+    matNorm(tMatrix)
 
     return tMatrix
 
@@ -62,34 +51,71 @@ def createChain(song, channel):  # Takes in both a song and a channel to base th
 #       Save Midi File       #
 ##############################
 
-def saveMidi(sequence, vel, time, name):
+def saveMidi(sequence, vel, name):
     file = MidiFile()
     result = MidiTrack()
-    for num in sequence:
-        result.append(mido.Message('note_on', note=num, velocity=vel, time=time))
+    for (note, time) in sequence:
+        result.append(mido.Message('note_on', note=note, velocity=vel, time=time))
 
     file.tracks.append(result)
     file.save(name)
 
 
-def genSeq(chain, length):
-    lower, upper = 63, 83
+def makeNoteTimeList(song, channel):
+    times = []
+    notes = []
+
+    # Creates a list of all possible notes and times found in song
+    for i, track in enumerate(song.tracks):
+        for msg in track:
+            if msg.type == 'note_on' and msg.channel == channel:
+                if msg.time not in times and msg.time > 1:
+                    times.append(msg.time)
+                if msg.note not in notes:
+                    notes.append(msg.note)
+    times.sort()
+    notes.sort()
+    result = []
+    for i in range(len(notes)):
+        for j in range(len(times)):
+            result.append((notes[i], times[j]))
+    return result
+
+
+def genSeq(chain, length, song, channel):
     seq = []
-    note = randint(lower, upper)
-    seq.append(note)
+    NoteTimeList = makeNoteTimeList(song, channel)
+    timeList = []
+    noteList = []
+    for (note, time) in NoteTimeList:
+        if time not in timeList:
+            timeList.append(time)
+        if note not in noteList:
+            noteList.append(note)
+
+
+    while True:
+        note = random.choice(noteList)
+        time = random.choice(timeList)
+        if (note, time) in NoteTimeList:
+            break
+
+    seq.append((note, time))
+
     for _ in range(length):
         sample = uniform(0, 1)
-        row = chain[note]
+        row = chain[NoteTimeList.index((note, time))]
         rowsum = 0
         for i in range(len(row)):
             if rowsum > sample:
-                note = i
-                seq.append(note)
+                (note, time) = NoteTimeList[i]
+                seq.append((note, time))
                 break
             rowsum += row[i]
         if rowsum <= sample:
-            note = randint(lower, upper)
-            seq.append(note)
+            note = random.choice(noteList)
+            time = random.choice(timeList)
+            seq.append((note, time))
     return seq
 
 
@@ -102,6 +128,12 @@ def matNorm(matrix): #Mutates Matrix by Normalizing it
 ##############################
 #          Running           #
 ##############################
+def makeMidi(song, channel):
+    chain = createChain(song, channel)
+    seq = genSeq(chain, 200, song, channel)
+    saveMidi(seq, 64, "TrialTwo.mid")
+
+makeMidi(bach1, 2)
 
 # for i, track in enumerate(bach1.tracks):
 #     min = 10000
@@ -110,10 +142,14 @@ def matNorm(matrix): #Mutates Matrix by Normalizing it
 #             min = msg.time
 #     print(min)
 
-chain = createChain(bach1, 2)
-for i in chain:
-    print(i)
-
+# chain = createChain(bach1, 2)
+# count = 0
+# for i in chain:
+#     if sum(i) > 0:
+#         count += 1
+#     print(sum(i))
+# #
+# print(count)
 
 # for i in range(len(chain)):
 #     flag = True
@@ -122,8 +158,8 @@ for i in chain:
 #             flag = False
 #             print(i)
 
+
+
 # seq = genSeq(chain, 200)
 # saveMidi(seq, 64, 100, "TrialOne.mid")
-#
-#
-# file.save("Testing.mid")
+
