@@ -9,28 +9,32 @@ bach1 = MidiFile('training-songs/bach_846.mid')
 bach2 = MidiFile('training-songs/bach_847.mid')
 bach3 = MidiFile('training-songs/bach_850.mid')
 
+chp1 = MidiFile('training-songs/chopin/chpn-p1.mid')
+
+anime1 = MidiFile('training-songs/anime/bravesong.mid')
+
 file = MidiFile()
 
 
-# testFile = MidiFile()
-# testTrack = MidiTrack()
-#
-# for i, track in enumerate(bach1.tracks):
-#     for msg in track:
-#         if (not msg.is_meta) and msg.type == "note_on" and msg.channel == 0:
-#             print(msg)
-#             testTrack.append(msg)
-# testFile.tracks.append(testTrack)
+testFile = MidiFile()
+testTrack = MidiTrack()
 
-# testTrack = MidiTrack()
+for i, track in enumerate(anime1.tracks):
+    for msg in track:
+        if (not msg.is_meta): # and msg.type == "note_on":
+            print(msg)
+            testTrack.append(msg)
+testFile.tracks.append(testTrack)
 #
-# for i, track in enumerate(bach1.tracks):
-#     for msg in track:
-#         if (not msg.is_meta) and msg.type == "note_on" and msg.channel == 3:
-#             print(msg)
-#             testTrack.append(msg)
-
-# testFile.tracks.append(testTrack)
+# # testTrack = MidiTrack()
+# #
+# # for i, track in enumerate(bach1.tracks):
+# #     for msg in track:
+# #         if (not msg.is_meta) and msg.type == "note_on" and msg.channel == 3:
+# #             print(msg)
+# #             testTrack.append(msg)
+# #
+# # testFile.tracks.append(testTrack)
 # testFile.save("Test.mid")
 
 
@@ -54,9 +58,9 @@ def createChain(songs, channel):  # Takes in both a list of songs and a channel 
     for song in songs:
         for i, track in enumerate(song.tracks):
             for msg in track:
-                if msg.type == 'note_on' and msg.channel == channel:  ## REMOVED msg.time > 1
-                    pair = (msg.note, msg.velocity, msg.time)
-                    curr = DataList.index(pair)
+                if (msg.type == 'note_on' or msg.type == 'note_off') and msg.channel == channel:  ## REMOVED msg.time > 1
+                    data = (msg.type, msg.note, msg.velocity, msg.time)
+                    curr = DataList.index(data)
                     if prev != 0:
                         tMatrix[prev][curr] += 1
                     prev = curr
@@ -85,8 +89,8 @@ def saveMidi(sequences, name):
     file = MidiFile()
     for sequence in sequences:
         result = MidiTrack()
-        for (note, velocity, time) in sequence:
-            result.append(mido.Message('note_on', note=note, velocity=velocity, time=time))
+        for (type, note, velocity, time) in sequence:
+            result.append(mido.Message(type=type, note=note, velocity=velocity, time=time))
         file.tracks.append(result)
 
     file.save(name)
@@ -102,10 +106,10 @@ def makeDataList(songs, channel):
     for song in songs:
         for i, track in enumerate(song.tracks):
             for msg in track:
-                if msg.type == 'note_on' and msg.channel == channel:
-                    print(msg)
-                    if (msg.note, msg.velocity, msg.time) not in result:
-                        result.append((msg.note, msg.velocity, msg.time))
+                if (msg.type == 'note_on' or msg.type == 'note_off') and msg.channel == channel:
+                    # print(msg)
+                    if (msg.type, msg.note, msg.velocity, msg.time) not in result:
+                        result.append((msg.type, msg.note, msg.velocity, msg.time))
                     # if msg.time not in times:
                     #     times.append(msg.time)
                     # if msg.note not in notes:
@@ -127,10 +131,14 @@ def makeDataList(songs, channel):
 def genSeq(chain, length, song, channel):
     seq = []
     DataList = makeDataList(song, channel)
+    typeList = []
     noteList = []
     velocityList = []
     timeList = []
-    for (note, velocity, time) in DataList:
+
+    for (type, note, velocity, time) in DataList:
+        if type not in typeList:
+            typeList.append(type)
         if time not in timeList:
             timeList.append(time)
         if note not in noteList:
@@ -139,38 +147,41 @@ def genSeq(chain, length, song, channel):
             velocityList.append(velocity)
 
     while True:
+        type = random.choice(typeList)
         note = random.choice(noteList)
         velocity = random.choice(velocityList)
         time = random.choice(timeList)
-        if (note, velocity, time) in DataList:
+        if (type, note, velocity, time) in DataList:
             break
 
-    seq.append((note, velocity, time))
+    seq.append((type, note, velocity, time))
 
     for _ in range(length):
         sample = uniform(0, 1)
-        if (note, velocity, time) not in DataList:
+        if (type, note, velocity, time) not in DataList:
             while True:
+                type = random.choice(typeList)
                 note = random.choice(noteList)
                 velocity = random.choice(velocityList)
                 time = random.choice(timeList)
-                if (note, velocity, time) in DataList:
+                if (type, note, velocity, time) in DataList:
                     break
 
-            seq.append((note, velocity, time))
-        row = chain[DataList.index((note, velocity, time))]
+            seq.append((type, note, velocity, time))
+        row = chain[DataList.index((type, note, velocity, time))]
         rowsum = 0
         for i in range(len(row)):
             if rowsum > sample:
-                (note, velocity, time) = DataList[i]
-                seq.append((note, velocity, time))
+                (type, note, velocity, time) = DataList[i]
+                seq.append((type, note, velocity, time))
                 break
             rowsum += row[i]
         if rowsum <= sample:
+            type = random.choice(typeList)
             note = random.choice(noteList)
             velocity = random.choice(velocityList)
             time = random.choice(timeList)
-            seq.append((note, velocity, time))
+            seq.append((type, note, velocity, time))
     return seq
 
 
@@ -193,7 +204,7 @@ def makeMidi(song, channels):
     saveMidi(seqs, "TrialThree.mid")
 
 
-makeMidi([bach1, bach2], [0,2,3,4,5])
+makeMidi([anime1], [0])
 
 # makeMidi(bach2, 0)
 
