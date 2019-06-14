@@ -6,6 +6,12 @@ from random import uniform
 import random
 
 bach1 = MidiFile('training-songs/bach_846.mid')
+bach2 = MidiFile('training-songs/bach_847.mid')
+bach3 = MidiFile('training-songs/bach_850.mid')
+
+# for i, track in enumerate(bach1.tracks):
+#     for msg in track:
+#         print(msg)
 
 file = MidiFile()
 
@@ -20,6 +26,7 @@ file = MidiFile()
 
 def createChain(song, channel):  # Takes in both a song and a channel to base the chain off of
     NoteTimeList = makeNoteTimeList(song, channel)
+
 
     size = len(NoteTimeList)
     tMatrix = np.zeros((size, size))
@@ -136,14 +143,9 @@ def makeMidi(song, channel):
     seq = genSeq(chain, 200, song, channel)
     saveMidi(seq, 64, "TrialTwo.mid")
 
-makeMidi(bach1, 2)
+makeMidi(bach2, 0)
 
-# for i, track in enumerate(bach1.tracks):
-#     min = 10000
-#     for msg in track:
-#         if msg.time < min and msg.time > 0:
-#             min = msg.time
-#     print(min)
+
 
 # chain = createChain(bach1, 2)
 # count = 0
