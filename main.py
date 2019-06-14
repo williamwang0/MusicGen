@@ -183,9 +183,9 @@ def matNorm(matrix):  # Mutates Matrix by Normalizing it
 ##############################
 #          Running           #
 ##############################
-def makeMidi(song):
+def makeMidi(song, channels):
     seqs = []
-    for channel in [0, 2, 3, 4, 5]:
+    for channel in channels:
         chain = createChain(song, channel)
         seq = genSeq(chain, 200, song, channel)
         seqs.append(seq)
@@ -193,7 +193,7 @@ def makeMidi(song):
     saveMidi(seqs, "TrialThree.mid")
 
 
-makeMidi([bach1, bach2])
+makeMidi([bach1, bach2], [0,2,3,4,5])
 
 # makeMidi(bach2, 0)
 
