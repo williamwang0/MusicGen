@@ -6,11 +6,13 @@ from random import uniform
 import random
 
 bach1 = MidiFile('training-songs/bach_846.mid')
+bach2 = MidiFile('training-songs/bach_847.mid')
+bach3 = MidiFile('training-songs/bach_850.mid')
 
 file = MidiFile()
 
 # TODO : IDEAS FOR IMPROVMENT
-# 1. input more data (pieces)
+# 1. input more data (pieces) DONE ALSO SUCKS
 # 2. transitions based on past TWO (note,time) pairs, not just the last one
 # 3. could add multiple streams (i.e. whole hand playing)
 
@@ -18,21 +20,22 @@ file = MidiFile()
 #    Creates Markov Chain    #
 ##############################
 
-def createChain(song, channel):  # Takes in both a song and a channel to base the chain off of
-    NoteTimeList = makeNoteTimeList(song, channel)
+def createChain(songs, channel):  # Takes in both a list of songs and a channel to base the chain off of
+    NoteTimeList = makeNoteTimeList(songs, channel)
 
     size = len(NoteTimeList)
     tMatrix = np.zeros((size, size))
 
     prev = 0
-    for i, track in enumerate(song.tracks):
-        for msg in track:
-            if msg.type == 'note_on' and msg.channel == channel and msg.time > 1:
-                pair = (msg.note, msg.time)
-                curr = NoteTimeList.index(pair)
-                if prev != 0:
-                    tMatrix[prev][curr] += 1
-                prev = curr
+    for song in songs:
+        for i, track in enumerate(song.tracks):
+            for msg in track:
+                if msg.type == 'note_on' and msg.channel == channel and msg.time > 1:
+                    pair = (msg.note, msg.time)
+                    curr = NoteTimeList.index(pair)
+                    if prev != 0:
+                        tMatrix[prev][curr] += 1
+                    prev = curr
 
     # prev = 0
     # for i, track in enumerate(song.tracks):
@@ -64,18 +67,19 @@ def saveMidi(sequence, vel, name):
     file.save(name)
 
 
-def makeNoteTimeList(song, channel):
+def makeNoteTimeList(songs, channel):
     times = []
     notes = []
 
     # Creates a list of all possible notes and times found in song
-    for i, track in enumerate(song.tracks):
-        for msg in track:
-            if msg.type == 'note_on' and msg.channel == channel:
-                if msg.time not in times and msg.time > 1:
-                    times.append(msg.time)
-                if msg.note not in notes:
-                    notes.append(msg.note)
+    for song in songs:
+        for i, track in enumerate(song.tracks):
+            for msg in track:
+                if msg.type == 'note_on' and msg.channel == channel:
+                    if msg.time not in times and msg.time > 1:
+                        times.append(msg.time)
+                    if msg.note not in notes:
+                        notes.append(msg.note)
     times.sort()
     notes.sort()
     result = []
@@ -134,9 +138,11 @@ def matNorm(matrix): #Mutates Matrix by Normalizing it
 def makeMidi(song, channel):
     chain = createChain(song, channel)
     seq = genSeq(chain, 200, song, channel)
-    saveMidi(seq, 64, "TrialTwo.mid")
+    saveMidi(seq, 64, "TrialThree.mid")
 
-makeMidi(bach1, 2)
+
+makeMidi([bach1, bach2, bach3], 2)
+
 
 # for i, track in enumerate(bach1.tracks):
 #     min = 10000
