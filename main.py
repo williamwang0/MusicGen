@@ -11,15 +11,15 @@ bach3 = MidiFile('training-songs/bach_850.mid')
 
 file = MidiFile()
 
-testFile = MidiFile()
-testTrack = MidiTrack()
-
-for i, track in enumerate(bach1.tracks):
-    for msg in track:
-        if (not msg.is_meta) and msg.type == "note_on" and msg.channel == 0:
-            print(msg)
-            testTrack.append(msg)
-testFile.tracks.append(testTrack)
+# testFile = MidiFile()
+# testTrack = MidiTrack()
+#
+# for i, track in enumerate(bach1.tracks):
+#     for msg in track:
+#         if (not msg.is_meta) and msg.type == "note_on" and msg.channel == 0:
+#             print(msg)
+#             testTrack.append(msg)
+# testFile.tracks.append(testTrack)
 
 # testTrack = MidiTrack()
 #
@@ -30,7 +30,7 @@ testFile.tracks.append(testTrack)
 #             testTrack.append(msg)
 
 # testFile.tracks.append(testTrack)
-testFile.save("Test.mid")
+# testFile.save("Test.mid")
 
 
 # TODO : IDEAS FOR IMPROVMENT
@@ -95,25 +95,30 @@ def makeDataList(songs, channel):
     velocities = []
     times = []
 
+    result = []
     # Creates a list of all possible notes and times found in song
     for song in songs:
         for i, track in enumerate(song.tracks):
             for msg in track:
                 if msg.type == 'note_on' and msg.channel == channel:
-                    if msg.time not in times:
-                        times.append(msg.time)
-                    if msg.note not in notes:
-                        notes.append(msg.note)
-                    if msg.velocity not in velocities:
-                        velocities.append(msg.velocity)
-    notes.sort()
-    velocities.sort()
-    times.sort()
-    result = []
-    for i in range(len(notes)):
-        for j in range(len(velocities)):
-            for k in range(len(times)):
-                result.append((notes[i], velocities[j], times[k]))
+                    print(msg)
+                    if (msg.note, msg.velocity, msg.time) not in result:
+                        result.append((msg.note, msg.velocity, msg.time))
+                    # if msg.time not in times:
+                    #     times.append(msg.time)
+                    # if msg.note not in notes:
+                    #     notes.append(msg.note)
+                    # if msg.velocity not in velocities:
+                    #     velocities.append(msg.velocity)
+    # notes.sort()
+    # velocities.sort()
+    # times.sort()
+    # result = []
+    # for i in range(len(notes)):
+    #     for j in range(len(velocities)):
+    #         for k in range(len(times)):
+    #             if ()
+    #             result.append((notes[i], velocities[j], times[k]))
     return result
 
 
