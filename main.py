@@ -80,13 +80,14 @@ def createChain(songs, channel):  # Takes in both a list of songs and a channel 
 #       Save Midi File       #
 ##############################
 
-def saveMidi(sequence, name):
+def saveMidi(sequences, name):
     file = MidiFile()
-    result = MidiTrack()
-    for (note, velocity, time) in sequence:
-        result.append(mido.Message('note_on', note=note, velocity=velocity, time=time))
+    for sequence in sequences:
+        result = MidiTrack()
+        for (note, velocity, time) in sequence:
+            result.append(mido.Message('note_on', note=note, velocity=velocity, time=time))
+        file.tracks.append(result)
 
-    file.tracks.append(result)
     file.save(name)
 
 
@@ -172,13 +173,18 @@ def matNorm(matrix):  # Mutates Matrix by Normalizing it
 ##############################
 #          Running           #
 ##############################
-def makeMidi(song, channel):
-    chain = createChain(song, channel)
-    seq = genSeq(chain, 200, song, channel)
-    saveMidi(seq, "TrialThree.mid")
+def makeMidi(song):
+    seqs = []
+    for channel in [0,2,3,4,5]:
+        chain = createChain(song, channel)
+        seq = genSeq(chain, 200, song, channel)
+        seqs.append(seq)
 
 
-makeMidi([bach2], 0)
+    saveMidi(seqs, "TrialThree.mid")
+
+
+makeMidi([bach1, bach2])
 
 # makeMidi(bach2, 0)
 
