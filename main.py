@@ -9,6 +9,10 @@ bach1 = MidiFile('training-songs/bach_846.mid')
 
 file = MidiFile()
 
+# TODO : IDEAS FOR IMPROVMENT
+# 1. input more data (pieces)
+# 2. transitions based on past TWO (note,time) pairs, not just the last one
+# 3. could add multiple streams (i.e. whole hand playing)
 
 ##############################
 #    Creates Markov Chain    #
@@ -17,7 +21,6 @@ file = MidiFile()
 def createChain(song, channel):  # Takes in both a song and a channel to base the chain off of
     NoteTimeList = makeNoteTimeList(song, channel)
 
-    print(NoteTimeList)
     size = len(NoteTimeList)
     tMatrix = np.zeros((size, size))
 
