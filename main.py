@@ -11,6 +11,7 @@ bach3 = MidiFile('training-songs/bach_850.mid')
 
 file = MidiFile()
 
+
 # testFile = MidiFile()
 # testTrack = MidiTrack()
 #
@@ -148,6 +149,15 @@ def genSeq(chain, length, song, channel):
 
     for _ in range(length):
         sample = uniform(0, 1)
+        if (note, velocity, time) not in DataList:
+            while True:
+                note = random.choice(noteList)
+                velocity = random.choice(velocityList)
+                time = random.choice(timeList)
+                if (note, velocity, time) in DataList:
+                    break
+
+            seq.append((note, velocity, time))
         row = chain[DataList.index((note, velocity, time))]
         rowsum = 0
         for i in range(len(row)):
@@ -175,11 +185,10 @@ def matNorm(matrix):  # Mutates Matrix by Normalizing it
 ##############################
 def makeMidi(song):
     seqs = []
-    for channel in [0,2,3,4,5]:
+    for channel in [0, 2, 3, 4, 5]:
         chain = createChain(song, channel)
         seq = genSeq(chain, 200, song, channel)
         seqs.append(seq)
-
 
     saveMidi(seqs, "TrialThree.mid")
 
