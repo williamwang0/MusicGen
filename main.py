@@ -9,14 +9,32 @@ bach1 = MidiFile('training-songs/bach_846.mid')
 bach2 = MidiFile('training-songs/bach_847.mid')
 bach3 = MidiFile('training-songs/bach_850.mid')
 
-# for i, track in enumerate(bach1.tracks):
-#     for msg in track:
-#         print(msg)
-
 file = MidiFile()
 
+testFile = MidiFile()
+testTrack = MidiTrack()
+
+for i, track in enumerate(bach1.tracks):
+    for msg in track:
+        if (not msg.is_meta) and msg.type == "note_on" and msg.channel == 0:
+            print(msg)
+            testTrack.append(msg)
+testFile.tracks.append(testTrack)
+
+# testTrack = MidiTrack()
+#
+# for i, track in enumerate(bach1.tracks):
+#     for msg in track:
+#         if (not msg.is_meta) and msg.type == "note_on" and msg.channel == 3:
+#             print(msg)
+#             testTrack.append(msg)
+
+# testFile.tracks.append(testTrack)
+testFile.save("Test.mid")
+
+
 # TODO : IDEAS FOR IMPROVMENT
-# 1. input more data (pieces)
+# 1. input more data (pieces) DONE ALSO SUCKS
 # 2. transitions based on past TWO (note,time) pairs, not just the last one
 # 3. could add multiple streams (i.e. whole hand playing)
 
@@ -24,22 +42,23 @@ file = MidiFile()
 #    Creates Markov Chain    #
 ##############################
 
-def createChain(song, channel):  # Takes in both a song and a channel to base the chain off of
-    NoteTimeList = makeNoteTimeList(song, channel)
+def createChain(songs, channel):  # Takes in both a list of songs and a channel to base the chain off of
+    DataList = makeDataList(songs, channel)
 
-
-    size = len(NoteTimeList)
+    size = len(DataList)
+    print(size)
     tMatrix = np.zeros((size, size))
 
     prev = 0
-    for i, track in enumerate(song.tracks):
-        for msg in track:
-            if msg.type == 'note_on' and msg.channel == channel and msg.time > 1:
-                pair = (msg.note, msg.time)
-                curr = NoteTimeList.index(pair)
-                if prev != 0:
-                    tMatrix[prev][curr] += 1
-                prev = curr
+    for song in songs:
+        for i, track in enumerate(song.tracks):
+            for msg in track:
+                if msg.type == 'note_on' and msg.channel == channel:  ## REMOVED msg.time > 1
+                    pair = (msg.note, msg.velocity, msg.time)
+                    curr = DataList.index(pair)
+                    if prev != 0:
+                        tMatrix[prev][curr] += 1
+                    prev = curr
 
     # prev = 0
     # for i, track in enumerate(song.tracks):
@@ -61,75 +80,85 @@ def createChain(song, channel):  # Takes in both a song and a channel to base th
 #       Save Midi File       #
 ##############################
 
-def saveMidi(sequence, vel, name):
+def saveMidi(sequence, name):
     file = MidiFile()
     result = MidiTrack()
-    for (note, time) in sequence:
-        result.append(mido.Message('note_on', note=note, velocity=vel, time=time))
+    for (note, velocity, time) in sequence:
+        result.append(mido.Message('note_on', note=note, velocity=velocity, time=time))
 
     file.tracks.append(result)
     file.save(name)
 
 
-def makeNoteTimeList(song, channel):
-    times = []
+def makeDataList(songs, channel):
     notes = []
+    velocities = []
+    times = []
 
     # Creates a list of all possible notes and times found in song
-    for i, track in enumerate(song.tracks):
-        for msg in track:
-            if msg.type == 'note_on' and msg.channel == channel:
-                if msg.time not in times and msg.time > 1:
-                    times.append(msg.time)
-                if msg.note not in notes:
-                    notes.append(msg.note)
-    times.sort()
+    for song in songs:
+        for i, track in enumerate(song.tracks):
+            for msg in track:
+                if msg.type == 'note_on' and msg.channel == channel:
+                    if msg.time not in times:
+                        times.append(msg.time)
+                    if msg.note not in notes:
+                        notes.append(msg.note)
+                    if msg.velocity not in velocities:
+                        velocities.append(msg.velocity)
     notes.sort()
+    velocities.sort()
+    times.sort()
     result = []
     for i in range(len(notes)):
-        for j in range(len(times)):
-            result.append((notes[i], times[j]))
+        for j in range(len(velocities)):
+            for k in range(len(times)):
+                result.append((notes[i], velocities[j], times[k]))
     return result
 
 
 def genSeq(chain, length, song, channel):
     seq = []
-    NoteTimeList = makeNoteTimeList(song, channel)
-    timeList = []
+    DataList = makeDataList(song, channel)
     noteList = []
-    for (note, time) in NoteTimeList:
+    velocityList = []
+    timeList = []
+    for (note, velocity, time) in DataList:
         if time not in timeList:
             timeList.append(time)
         if note not in noteList:
             noteList.append(note)
-
+        if velocity not in velocityList:
+            velocityList.append(velocity)
 
     while True:
         note = random.choice(noteList)
+        velocity = random.choice(velocityList)
         time = random.choice(timeList)
-        if (note, time) in NoteTimeList:
+        if (note, velocity, time) in DataList:
             break
 
-    seq.append((note, time))
+    seq.append((note, velocity, time))
 
     for _ in range(length):
         sample = uniform(0, 1)
-        row = chain[NoteTimeList.index((note, time))]
+        row = chain[DataList.index((note, velocity, time))]
         rowsum = 0
         for i in range(len(row)):
             if rowsum > sample:
-                (note, time) = NoteTimeList[i]
-                seq.append((note, time))
+                (note, velocity, time) = DataList[i]
+                seq.append((note, velocity, time))
                 break
             rowsum += row[i]
         if rowsum <= sample:
             note = random.choice(noteList)
+            velocity = random.choice(velocityList)
             time = random.choice(timeList)
-            seq.append((note, time))
+            seq.append((note, velocity, time))
     return seq
 
 
-def matNorm(matrix): #Mutates Matrix by Normalizing it
+def matNorm(matrix):  # Mutates Matrix by Normalizing it
     for index in range(matrix.shape[0] - 1):
         if sum(matrix[index]) != 0:
             matrix[index] = matrix[index] / sum(matrix[index])
@@ -141,10 +170,12 @@ def matNorm(matrix): #Mutates Matrix by Normalizing it
 def makeMidi(song, channel):
     chain = createChain(song, channel)
     seq = genSeq(chain, 200, song, channel)
-    saveMidi(seq, 64, "TrialTwo.mid")
+    saveMidi(seq, "TrialThree.mid")
 
-makeMidi(bach2, 0)
 
+makeMidi([bach2], 0)
+
+# makeMidi(bach2, 0)
 
 
 # chain = createChain(bach1, 2)
@@ -164,7 +195,5 @@ makeMidi(bach2, 0)
 #             print(i)
 
 
-
 # seq = genSeq(chain, 200)
 # saveMidi(seq, 64, 100, "TrialOne.mid")
-
