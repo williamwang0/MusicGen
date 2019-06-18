@@ -166,10 +166,18 @@ def genSeq(chain, length, song, channel):
             rowsum += row[i]
         if rowsum <= sample: #Edge Case? The rowsum is less than 1 due to rounding errors. i.e Sample is 1, but 3 possible outcomes w/probability 3.3333333
             #BUG HERE? NOTE VELOCITY TIME NOT IN DATALIST IS POSSIBLE
-            note = random.choice(noteList)
+            """note = random.choice(noteList)
             velocity = random.choice(velocityList)
             time = random.choice(timeList)
-            seq.append((note, velocity, time))
+            seq.append((note, velocity, time))"""
+            if (note, velocity, time) not in DataList:
+                while True:
+                    note = random.choice(noteList)
+                    velocity = random.choice(velocityList)
+                    time = random.choice(timeList)
+                    if (note, velocity, time) in DataList:
+                        break
+
     return seq
 
 
