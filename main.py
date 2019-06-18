@@ -67,16 +67,6 @@ def createChain(songs, channel):  # Takes in both a list of songs and a channel 
                     prev_note = msg.note
 
 
-    # prev = 0
-    # for i, track in enumerate(song.tracks):
-    #     for msg in track:
-    #         if msg.type == 'note_on' and msg.channel == channel:
-    #
-    #             curr = msg.note
-    #             if prev != 0:
-    #                 normalizationVec[prev - 1] = normalizationVec[prev - 1] + 1
-    #                 tMatrix[prev - 1][curr - 1] = tMatrix[prev - 1][curr - 1] + 1
-    #             prev = curr
 
     matNorm(tMatrix)
 
@@ -113,21 +103,7 @@ def makeDataList(songs, channel):
                         result.append((prev, msg.note, msg.velocity, msg.time))
 
                     prev = msg.note
-                    # if msg.time not in times:
-                    #     times.append(msg.time)
-                    # if msg.note not in notes:
-                    #     notes.append(msg.note)
-                    # if msg.velocity not in velocities:
-                    #     velocities.append(msg.velocity)
-    # notes.sort()
-    # velocities.sort()
-    # times.sort()
-    # result = []
-    # for i in range(len(notes)):
-    #     for j in range(len(velocities)):
-    #         for k in range(len(times)):
-    #             if ()
-    #             result.append((notes[i], velocities[j], times[k]))
+
     return result
 
 
@@ -215,25 +191,3 @@ def makeMidi(song, channels):
 
 makeMidi([bach1, bach2], [0,2,3,4,5])
 
-# makeMidi(bach2, 0)
-
-
-# chain = createChain(bach1, 2)
-# count = 0
-# for i in chain:
-#     if sum(i) > 0:
-#         count += 1
-#     print(sum(i))
-# #
-# print(count)
-
-# for i in range(len(chain)):
-#     flag = True
-#     for x in chain[i]:
-#         if x:
-#             flag = False
-#             print(i)
-
-
-# seq = genSeq(chain, 200)
-# saveMidi(seq, 64, 100, "TrialOne.mid")
