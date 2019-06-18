@@ -51,15 +51,21 @@ def createChain(songs, channel):  # Takes in both a list of songs and a channel 
     tMatrix = np.zeros((size, size))
 
     prev = 0
+
     for song in songs:
         for i, track in enumerate(song.tracks):
+            prev_note = 0
             for msg in track:
                 if msg.type == 'note_on' and msg.channel == channel:  ## REMOVED msg.time > 1
-                    pair = (msg.note, msg.velocity, msg.time)
+                    pair = (prev_note, msg.note, msg.velocity, msg.time)
+                    if (prev_note, msg.note, msg.velocity, msg.time) == (72, 60, 61, 1):
+                        print("should be in chain")
                     curr = DataList.index(pair)
                     if prev != 0:
                         tMatrix[prev][curr] += 1
                     prev = curr
+                    prev_note = msg.note
+
 
     # prev = 0
     # for i, track in enumerate(song.tracks):
@@ -98,11 +104,15 @@ def makeDataList(songs, channel):
     # Creates a list of all possible notes and times found in song
     for song in songs:
         for i, track in enumerate(song.tracks):
+            prev = 0
             for msg in track:
                 if msg.type == 'note_on' and msg.channel == channel:
-                    print(msg)
-                    if (msg.note, msg.velocity, msg.time) not in result:
-                        result.append((msg.note, msg.velocity, msg.time))
+                    if (prev, msg.note, msg.velocity, msg.time) == (72, 60, 61, 1):
+                        print("YES INCLUDED")
+                    if (prev, msg.note, msg.velocity, msg.time) not in result:
+                        result.append((prev, msg.note, msg.velocity, msg.time))
+
+                    prev = msg.note
                     # if msg.time not in times:
                     #     times.append(msg.time)
                     # if msg.note not in notes:
@@ -127,7 +137,7 @@ def genSeq(chain, length, song, channel):
     noteList = []
     velocityList = []
     timeList = []
-    for (note, velocity, time) in DataList:
+    for (prev, note, velocity, time) in DataList:
         if time not in timeList:
             timeList.append(time)
         if note not in noteList:
@@ -136,18 +146,20 @@ def genSeq(chain, length, song, channel):
             velocityList.append(velocity)
 
     while True: #Initializes first tuple combination in chain
+        prev = random.choice(noteList)
         note = random.choice(noteList)
         velocity = random.choice(velocityList)
         time = random.choice(timeList)
-        if (note, velocity, time) in DataList: #Insures a valid combination
+        if (prev, note, velocity, time) in DataList: #Insures a valid combination
             break
 
     seq.append((note, velocity, time))
 
     for _ in range(length):
         sample = uniform(0, 1) # Random Number Generated for Cumulative Sum
-        if (note, velocity, time) not in DataList:
+        if (prev, note, velocity, time) not in DataList:
             while True:
+                prev = random.choice(noteList)
                 note = random.choice(noteList)
                 velocity = random.choice(velocityList)
                 time = random.choice(timeList)
@@ -155,12 +167,12 @@ def genSeq(chain, length, song, channel):
                     break
 
             seq.append((note, velocity, time))
-        row = chain[DataList.index((note, velocity, time))]  #All possible transitions
+        row = chain[DataList.index((prev, note, velocity, time))]  #All possible transitions
         rowsum = 0
 
         for i in range(len(row)): #Cumulative Sum
             if rowsum > sample:
-                (note, velocity, time) = DataList[i]
+                (prev, note, velocity, time) = DataList[i]
                 seq.append((note, velocity, time))
                 break
             rowsum += row[i]
@@ -170,8 +182,9 @@ def genSeq(chain, length, song, channel):
             velocity = random.choice(velocityList)
             time = random.choice(timeList)
             seq.append((note, velocity, time))"""
-            if (note, velocity, time) not in DataList:
+            if (prev, note, velocity, time) not in DataList:
                 while True:
+                    prev = random.choice(noteList)
                     note = random.choice(noteList)
                     velocity = random.choice(velocityList)
                     time = random.choice(timeList)
