@@ -37,7 +37,7 @@ file = MidiFile()
 # TODO : IDEAS FOR IMPROVMENT
 # 1. input more data (pieces) DONE ALSO SUCKS
 # 2. transitions based on past TWO (note,time) pairs, not just the last one
-# 3. could add multiple streams (i.e. whole hand playing)
+# 3. could add multiple streams (i.e. whole hand playing) DONE ALSO SUCKS
 
 ##############################
 #    Creates Markov Chain    #
@@ -93,9 +93,6 @@ def saveMidi(sequences, name):
 
 
 def makeDataList(songs, channel):
-    notes = []
-    velocities = []
-    times = []
 
     result = []
     # Creates a list of all possible notes and times found in song
@@ -138,17 +135,17 @@ def genSeq(chain, length, song, channel):
         if velocity not in velocityList:
             velocityList.append(velocity)
 
-    while True:
+    while True: #Initializes first tuple combination in chain
         note = random.choice(noteList)
         velocity = random.choice(velocityList)
         time = random.choice(timeList)
-        if (note, velocity, time) in DataList:
+        if (note, velocity, time) in DataList: #Insures a valid combination
             break
 
     seq.append((note, velocity, time))
 
     for _ in range(length):
-        sample = uniform(0, 1)
+        sample = uniform(0, 1) # Random Number Generated for Cumulative Sum
         if (note, velocity, time) not in DataList:
             while True:
                 note = random.choice(noteList)
@@ -158,15 +155,17 @@ def genSeq(chain, length, song, channel):
                     break
 
             seq.append((note, velocity, time))
-        row = chain[DataList.index((note, velocity, time))]
+        row = chain[DataList.index((note, velocity, time))]  #All possible transitions
         rowsum = 0
-        for i in range(len(row)):
+
+        for i in range(len(row)): #Cumulative Sum
             if rowsum > sample:
                 (note, velocity, time) = DataList[i]
                 seq.append((note, velocity, time))
                 break
             rowsum += row[i]
-        if rowsum <= sample:
+        if rowsum <= sample: #Edge Case? The rowsum is less than 1 due to rounding errors. i.e Sample is 1, but 3 possible outcomes w/probability 3.3333333
+            #BUG HERE? NOTE VELOCITY TIME NOT IN DATALIST IS POSSIBLE
             note = random.choice(noteList)
             velocity = random.choice(velocityList)
             time = random.choice(timeList)
