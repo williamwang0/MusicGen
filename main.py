@@ -47,7 +47,6 @@ def createChain(songs, channel):  # Takes in both a list of songs and a channel 
     DataList = makeDataList(songs, channel)
 
     size = len(DataList)
-    print(size)
     tMatrix = np.zeros((size, size))
 
     prev = 0
@@ -184,6 +183,8 @@ def matNorm(matrix):  # Mutates Matrix by Normalizing it
 ##############################
 #          Running           #
 ##############################
+
+
 def makeMidi(song, channels):
     seqs = []
     for channel in channels:
