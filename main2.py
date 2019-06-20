@@ -42,7 +42,7 @@ def genSeq(length, songs, maxHindsight, channel):
     for _ in range(length):
         sample = sample(chain, prev, dataList)
         result.append(sample)
-        prev = prevAppend(prev, None, maxHindsight, sample)
+        prev = prevAppend(prev, sample, maxHindsight)
 
 
     return result
@@ -80,7 +80,7 @@ def matNorm(matrix):  # Mutates Matrix by Normalizing it
             matrix[index] = matrix[index] / sum(matrix[index])
 
 def prevAppend(prev, msg, hindsight, tuple = None): #Appends new message to old previous tuple, and also cuts off first if needed to maintain len <= hindsight
-    if msg != None: #If message is passed in
+    if type(msg) != tuple: #If message is passed in
         if len(prev) < hindsight:  # Insures prev does not have more than hindsight many previous notes
             prev.append((msg.type == 'note_on', msg.note, msg.velocity, msg.time))
             return prev
