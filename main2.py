@@ -68,6 +68,11 @@ def getDataList(songs, channel, hindsight):
 
     return result
 
+def makeMidi(songs, channel, hindsight):
+
+    seq = genSeq(200, songs, hindsight, channel)
+    saveMidi(seq, "NewCode.mid")
+
 
 
 ##############################
@@ -82,23 +87,24 @@ def matNorm(matrix):  # Mutates Matrix by Normalizing it
 def prevAppend(prev, msg, hindsight, tuple = None): #Appends new message to old previous tuple, and also cuts off first if needed to maintain len <= hindsight
     if type(msg) != tuple: #If message is passed in
         if len(prev) < hindsight:  # Insures prev does not have more than hindsight many previous notes
-            prev.append((msg.type == 'note_on', msg.note, msg.velocity, msg.time))
+            prev = prev + ((msg.type == 'note_on', msg.note, msg.velocity, msg.time))
             return prev
         else:
             temp = ()
             for i in range(1, len(prev)):
-                temp.append(prev[i])
-            temp.append((msg.type == 'note_on', msg.note, msg.velocity, msg.time))
+                temp = temp + (prev[i])
+            temp = temp + ((msg.type == 'note_on', msg.note, msg.velocity, msg.time))
             return temp
+
     else: #If tuple is passed in
         if len(prev) < hindsight:
-            prev.append(tuple)
+            prev = prev + (tuple)
             return prev
         else:
             temp = ()
             for i in range(1, len(prev)):
-                temp.append(prev[i])
-            temp.append(tuple)
+                temp = temp + (prev[i])
+            temp = temp + (tuple)
             return temp
 
 def sample(pk, kTuple, dataList): #Returns the next note, if valid previous combination
@@ -132,5 +138,31 @@ def genOriginal(songs, channel, hindsight):
 
     return random.choice(getPrevs(songs, channel, hindsight))
 
+def saveMidi(sequences, name):
+    file = MidiFile()
+    result = MidiTrack()
+
+    for (type, note, velocity, time) in sequence:
+        if type == True:
+            type == 'note_on'
+        else:
+            type == 'note_off'
+
+        result.append(mido.Message(type, note=note, velocity=velocity, time=time))
+
+    file.tracks.append(result)
+
+    file.save(name)
 
 
+##############################
+#           Running          #
+##############################
+
+bach1 = MidiFile('training-songs/bach_846.mid')
+bach2 = MidiFile('training-songs/bach_847.mid')
+bach3 = MidiFile('training-songs/bach_850.mid')
+
+file = MidiFile()
+
+makeMidi([bach1, bach2], 0, 3)
