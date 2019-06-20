@@ -34,9 +34,9 @@ file = MidiFile()
 # testFile.save("Test.mid")
 
 
-# TODO : IDEAS FOR IMPROVMENT
+# TODO : IDEAS FOR IMPROVEMENT
 # 1. input more data (pieces) DONE ALSO SUCKS
-# 2. transitions based on past TWO (note,time) pairs, not just the last one
+# 2. transitions based on past TWO (note,time) pairs, not just the last one DONE ? Maybe with some bugs
 # 3. could add multiple streams (i.e. whole hand playing) DONE ALSO SUCKS
 
 ##############################
@@ -51,10 +51,10 @@ def createChain(songs, channel):  # Takes in both a list of songs and a channel 
     tMatrix = np.zeros((size, size))
 
     prev = 0
-
+    prev_note = 0
     for song in songs:
         for i, track in enumerate(song.tracks):
-            prev_note = 0
+
             for msg in track:
                 if msg.type == 'note_on' and msg.channel == channel:  ## REMOVED msg.time > 1
                     pair = (prev_note, msg.note, msg.velocity, msg.time)
@@ -92,9 +92,10 @@ def makeDataList(songs, channel):
 
     result = []
     # Creates a list of all possible notes and times found in song
+    prev = 0
     for song in songs:
         for i, track in enumerate(song.tracks):
-            prev = 0
+
             for msg in track:
                 if msg.type == 'note_on' and msg.channel == channel:
                     if (prev, msg.note, msg.velocity, msg.time) == (72, 60, 61, 1):
@@ -113,17 +114,18 @@ def genSeq(chain, length, song, channel):
     noteList = []
     velocityList = []
     timeList = []
+
     for (prev, note, velocity, time) in DataList:
         if time not in timeList:
             timeList.append(time)
-        if note not in noteList:
-            noteList.append(note)
+        if (prev, note) not in noteList:
+            noteList.append((prev, note))
         if velocity not in velocityList:
             velocityList.append(velocity)
 
     while True: #Initializes first tuple combination in chain
-        prev = random.choice(noteList)
-        note = random.choice(noteList)
+        rand = random.choice(noteList)
+        prev, note = rand[0], rand[1]
         velocity = random.choice(velocityList)
         time = random.choice(timeList)
         if (prev, note, velocity, time) in DataList: #Insures a valid combination
@@ -131,18 +133,21 @@ def genSeq(chain, length, song, channel):
 
     seq.append((note, velocity, time))
 
-    for _ in range(length):
+    for _ in range(length): #TRAVERSING CHAIN
+
         sample = uniform(0, 1) # Random Number Generated for Cumulative Sum
         if (prev, note, velocity, time) not in DataList:
             while True:
-                prev = random.choice(noteList)
-                note = random.choice(noteList)
+                rand = random.choice(noteList)
+                prev, note = rand[0], rand[1]
                 velocity = random.choice(velocityList)
                 time = random.choice(timeList)
                 if (note, velocity, time) in DataList:
                     break
 
             seq.append((note, velocity, time))
+
+
         row = chain[DataList.index((prev, note, velocity, time))]  #All possible transitions
         rowsum = 0
 
@@ -190,4 +195,3 @@ def makeMidi(song, channels):
 
 
 makeMidi([bach1, bach2], [0,2,3,4,5])
-
