@@ -40,9 +40,9 @@ def genSeq(length, songs, maxHindsight, channel):
     result = []
 
     for _ in range(length):
-        tempSample = sample(chain, prev, dataList)
-        result.append(tempSample)
-        prev = prevAppend(prev, None, maxHindsight, tempSample)
+        sample = sample(chain, prev, dataList)
+        result.append(sample)
+        prev = prevAppend(prev, None, maxHindsight, sample)
 
 
     return result
