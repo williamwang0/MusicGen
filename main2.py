@@ -40,9 +40,9 @@ def genSeq(length, songs, maxHindsight, channel):
     result = []
 
     for _ in range(length):
-        sample = sample(chain, prev, dataList)
-        result.append(sample)
-        prev = prevAppend(prev, sample, maxHindsight)
+        curr = sample(chain, prev, dataList)
+        result.append(curr)
+        prev = prevAppend(prev, curr, maxHindsight)
 
 
     return result
@@ -85,26 +85,26 @@ def matNorm(matrix):  # Mutates Matrix by Normalizing it
             matrix[index] = matrix[index] / sum(matrix[index])
 
 def prevAppend(prev, msg, hindsight, tuple = None): #Appends new message to old previous tuple, and also cuts off first if needed to maintain len <= hindsight
-    if type(msg) != tuple: #If message is passed in
+    if type(msg) is tuple == False: #If message is passed in
         if len(prev) < hindsight:  # Insures prev does not have more than hindsight many previous notes
-            prev = prev + ((msg.type == 'note_on', msg.note, msg.velocity, msg.time))
+            prev = prev + ((msg.type == 'note_on', msg.note, msg.velocity, msg.time),)
             return prev
         else:
             temp = ()
             for i in range(1, len(prev)):
-                temp = temp + (prev[i])
-            temp = temp + ((msg.type == 'note_on', msg.note, msg.velocity, msg.time))
+                temp = temp + (prev[i],)
+            temp = temp + ((msg.type == 'note_on', msg.note, msg.velocity, msg.time),)
             return temp
 
     else: #If tuple is passed in
         if len(prev) < hindsight:
-            prev = prev + (tuple)
+            prev = prev + (tuple,)
             return prev
         else:
             temp = ()
             for i in range(1, len(prev)):
-                temp = temp + (prev[i])
-            temp = temp + (tuple)
+                temp = temp + (prev[i],)
+            temp = temp + (tuple,)
             return temp
 
 def sample(pk, kTuple, dataList): #Returns the next note, if valid previous combination
@@ -138,17 +138,17 @@ def genOriginal(songs, channel, hindsight):
 
     return random.choice(getPrevs(songs, channel, hindsight))
 
-def saveMidi(sequences, name):
+def saveMidi(sequence, name):
     file = MidiFile()
     result = MidiTrack()
 
     for (type, note, velocity, time) in sequence:
         if type == True:
-            type == 'note_on'
+            result.append(mido.Message('note_on', note=note, velocity=velocity, time=time))
         else:
-            type == 'note_off'
+            result.append(mido.Message('note_off', note=note, velocity=velocity, time=time))
 
-        result.append(mido.Message(type, note=note, velocity=velocity, time=time))
+
 
     file.tracks.append(result)
 
@@ -165,4 +165,4 @@ bach3 = MidiFile('training-songs/bach_850.mid')
 
 file = MidiFile()
 
-makeMidi([bach1, bach2], 0, 3)
+makeMidi([bach1], 0, 6)
