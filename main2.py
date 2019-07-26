@@ -41,7 +41,7 @@ def genSeq(length, songs, maxHindsight, channel):
 
     for _ in range(length):
         curr = sample(chain, prev, dataList)
-        result.append(curr)
+        result.extend(curr)
         prev = prevAppend(prev, curr, maxHindsight)
 
 
@@ -119,7 +119,20 @@ def sample(pk, kTuple, dataList): #Returns the next note, if valid previous comb
     for i in range(len(dataList)):
         sum += row[i]
         if sum >= sample:
-            return dataList[i]
+            result = [dataList[i]]
+            result.extend(chordHeur(dataList[i], sample))
+            return result
+
+def chordHeur(msg, prob): #Adds a third and fifth above the note with 1/2 chance
+    chords = {0:[4,7], 1:[5,8], 2:[5,9], 3:[7,10], 4:[7,11], 5:[9,12],
+              6:[10,13], 7:[11,14], 8:[12,15], 9:[12,16], 10:[14,17], 11:[15,18]}
+    if prob > 0.5:
+        chord = chords[msg[1] % 12]
+        third = (msg[1], msg[1] + chord[0], msg[2], msg[3])
+        fifth = (msg[1], msg[1] + chord[1], msg[2], msg[3])
+        return [third, fifth]
+    else:
+        return []
 
 def getPrevs(songs, channel, hindsight): #Returns all possible prev states in the form of a list
 
