@@ -1,7 +1,7 @@
 # Music Generation
 
 ## Overview
-Music Generation analyzes midi files of various songs by a composer and generates a piece composed in a similar style. The project uses a Markov Decision Process (MDP) to determine how notes transitions from one to another.
+Music Generation analyzes the midi files of various pieces and generates a piece composed in a similar style. The project uses a Markov Decision Process (MDP) to determine how notes transitions from one to another.
 
 In `main.py`, a naive Markov chain is implemented, only utilizing information about the previous note to determine which note to play next.
 
