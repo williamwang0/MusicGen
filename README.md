@@ -23,6 +23,7 @@ Chord Heuristics and Hindsight: `python3 main2.py`
 ## Results
 
 #### Naive
+* TrialOne.mid
 * TrialTwo.mid
 * TrialThree.mid
 
